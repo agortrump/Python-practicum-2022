@@ -1,11 +1,19 @@
 from flask import Flask, render_template
+import urllib.request
 
 app = Flask(__name__, template_folder='template')
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/weather')
+def get_weather():
+    city = 'Tallinn'
+    url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
+        city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric'
+
+    weather = urllib.request.urlopen(url)
+    data = weather.read
+
+    return render_template('weather.html')
 
 
 @app.route('/welcome')
