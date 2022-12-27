@@ -1,14 +1,14 @@
 {
     "builds": [
         {
-            "src": "api/welcome.py",
+            "src": "welcome.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "api/welcome.py"
+            "dest": "welcome.py"
         }
     ]
 }

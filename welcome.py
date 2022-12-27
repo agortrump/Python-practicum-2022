@@ -13,7 +13,7 @@ def get_weather():
     weather = urllib.request.urlopen(url)
     data = weather.read
 
-    return render_template('/Templates/weather.html')
+    return render_template('weather.html')
 
 
 @app.route('/welcome')
