@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import urllib.request
 
 app = Flask(__name__, template_folder='Templates')
@@ -6,14 +6,14 @@ app = Flask(__name__, template_folder='Templates')
 
 @app.route('/weather')
 def get_weather():
-    city = 'Tallinn'
+    city = request.form[city]
     url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
         city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric'
 
     weather = urllib.request.urlopen(url)
     data = weather.read
 
-    return render_template('weather.html')
+    return render_template('weather.html'), data
 
 
 @app.route('/welcome')
