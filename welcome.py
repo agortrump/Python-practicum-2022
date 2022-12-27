@@ -5,7 +5,7 @@ app = Flask(__name__, template_folder='Templates')
 
 
 # Weather information and city input
-@app.route('/weather', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def get_weather():
     # Get input from HTML form
     if request.method == 'POST':
