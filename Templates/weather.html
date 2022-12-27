@@ -4,9 +4,10 @@
 <body>
     <h1>Weather</h1>
 
-    <form>
-        <label for="city">City:</label><br>
-        <input type="text" id="city" name="city"><br>
+    <form action="/weather" method="post">
+        <label for="city">Type city name for wether information:</label><br>
+        <input type="text" id="city" name="city_name"><br>
+        <button type="submit">Submit</button>
     </form>
 </body>
 

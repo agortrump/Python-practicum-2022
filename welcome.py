@@ -1,19 +1,27 @@
 from flask import Flask, render_template, request
-import urllib.request
+import requests
+import json
 
 app = Flask(__name__, template_folder='Templates')
 
 
-@app.route('/weather')
+# Weather information and city input
+@app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
-    city = request.form[city]
-    url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
-        city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric'
+    # Get input from HTML form
+    if request.method == 'POST':
+        city = request.form.get('city_name')
 
-    weather = urllib.request.urlopen(url)
-    data = weather.read
+        # Merging city and API address
+        url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
+            city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric&mode=json'
 
-    return render_template('weather.html'), data
+        weather_json = requests.get(url).json()
+        # weather = json.loads(weather_json)
+
+        return render_template('weather_output.html', data=weather_json, city_name=city)
+
+    return render_template('weather.html')
 
 
 @app.route('/welcome')
