@@ -1,9 +1,32 @@
+body {
+    background-color: powderblue;
+}
+
 h1 {
-    color: rgb(179, 27, 27);
+    color: rgb(102, 71, 71);
+    font-family: 'Franklin Gothic Medium';
     text-align: center;
+}
+
+input {
+    padding: 5px;
+    margin: 5px;
+    margin-left: 50px;
+    margin-top: -30px;
+}
+
+button {
+    background-color: aquamarine;
+    padding: 10px 15px;
+    font-size: 20px;
+    display: grid;
+    margin-left: 50px;
+
 }
 
 p {
     font-family: verdana;
     font-size: 20px;
+    margin-left: 50px;
+
 }
