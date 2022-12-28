@@ -1,9 +1,6 @@
 from flask import Flask, render_template, request
 import requests
 
-<<<<<<< Updated upstream
-app = Flask(__name__, template_folder='Templates')
-=======
 
 app = Flask(__name__,
             template_folder='templates',
@@ -24,7 +21,6 @@ def welcome_home():
 @app.route('/welcome/back')
 def welcome_back():
     return 'Welcome Back'
->>>>>>> Stashed changes
 
 
 # Weather information and city input
