@@ -24,7 +24,7 @@ def welcome_back():
 
 
 # Weather information and city input
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
     # Get input from HTML form
     if request.method == 'POST':
