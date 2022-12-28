@@ -5,15 +5,26 @@
     <meta charset="utf-8">
     <title>Weather in {{city_name}}</title>
 
-    <link rel="stylesheet" href="/css/styles.css" type="text/css">
+    <link rel="stylesheet" href="../css/styles.css" type="text/css">
+    <style>
+        body {
+            background-color: rgb(200, 203, 201);
+        }
+
+        h1 {
+            color: rgb(119, 119, 224);
+        }
+
+        p {
+            color: rgb(221, 178, 178);
+        }
+    </style>
 </head>
 
 <body>
     <h1>Weather in {{city_name}}, {{data.sys.country}}</h1>
-
-    <p>Temperature: {{data.main.temp}} C </p>
-    <p> but feels like {{data.main.feels_like}} C, caused by wind speed of {{data.wind.speed}} m/s</p>
-    <p>{{data.message}}</p>
+    <p>Temperature: {{data.main.temp}} C</p>
+    <p>Wind speed: {{data.wind.speed}} m/s</p>
 </body>
 
 </html>
