@@ -1,7 +1,30 @@
 from flask import Flask, render_template, request
 import requests
 
+<<<<<<< Updated upstream
 app = Flask(__name__, template_folder='Templates')
+=======
+
+app = Flask(__name__,
+            template_folder='templates',
+            static_url_path='',
+            static_folder='static')
+
+
+@app.route('/')
+def welcome():
+    return render_template('index.html')
+
+
+@app.route('/welcome/home')
+def welcome_home():
+    return 'Welcome Home'
+
+
+@app.route('/welcome/back')
+def welcome_back():
+    return 'Welcome Back'
+>>>>>>> Stashed changes
 
 
 # Weather information and city input
@@ -18,8 +41,11 @@ def get_weather():
         # requesting json from url
         weather_json = requests.get(url).json()
 
-        # returning input and weather data to output html
-        return render_template('weather_output.html', data=weather_json, city_name=city)
+        if 'sys' in weather_json:
+            # returning input and weather data to output html
+            return render_template('weather_output.html', data=weather_json, city_name=city)
+        else:
+            return render_template('not_found.html')
 
     return render_template('weather.html')
 
