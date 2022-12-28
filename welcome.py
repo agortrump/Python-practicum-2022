@@ -1,15 +1,11 @@
 from flask import Flask, render_template, request
 import requests
 
-<< << << < HEAD
 
-== == == =
->>>>>> > f09cba390c5eac60f87f446ace2d63d2018203c9
 app = Flask(__name__,
             template_folder='templates',
             static_url_path='',
             static_folder='static')
-<< << << < HEAD
 
 
 @app.route('/')
@@ -28,29 +24,6 @@ def welcome_back():
 
 
 # Weather information and city input
-== == == =
-
-
-@app.route('/')
-def welcome():
-    return render_template('index.html')
-
-
-@app.route('/welcome/home')
-def welcome_home():
-    return 'Welcome Home'
-
-
-@app.route('/welcome/back')
-def welcome_back():
-    return 'Welcome Back'
-
-
-# Weather information and city input
-
->>>>>> > f09cba390c5eac60f87f446ace2d63d2018203c9
-
-
 @app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
     # Get input from HTML form
