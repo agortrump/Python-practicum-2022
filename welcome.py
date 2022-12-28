@@ -29,6 +29,7 @@ def get_weather():
     # Get input from HTML form
     if request.method == 'POST':
         city = request.form.get('city_name')
+        city = city.capitalize()
 
         # Merging city and API address
         url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
