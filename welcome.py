@@ -1,11 +1,30 @@
 from flask import Flask, render_template, request
 import requests
 
-app = Flask(__name__, template_folder='Templates')
+app = Flask(__name__,
+            template_folder='templates',
+            static_url_path='',
+            static_folder='static')
+
+
+@app.route('/')
+def welcome():
+    return render_template('index.html')
+
+
+@app.route('/welcome/home')
+def welcome_home():
+    return 'Welcome Home'
+
+
+@app.route('/welcome/back')
+def welcome_back():
+    return 'Welcome Back'
 
 
 # Weather information and city input
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
     # Get input from HTML form
     if request.method == 'POST':
@@ -24,20 +43,5 @@ def get_weather():
     return render_template('weather.html')
 
 
-@app.route('/welcome')
-def welcome():
-    return 'Welcome'
-
-
-@app.route('/welcome/home')
-def welcome_home():
-    return 'Welcome Home'
-
-
-@app.route('/welcome/back')
-def welcome_back():
-    return 'Welcome Back'
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=80)
