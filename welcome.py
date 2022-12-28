@@ -46,20 +46,5 @@ def get_weather():
     return render_template('weather.html')
 
 
-@app.route('/welcome')
-def welcome():
-    return 'Welcome'
-
-
-@app.route('/welcome/home')
-def welcome_home():
-    return 'Welcome Home'
-
-
-@app.route('/welcome/back')
-def welcome_back():
-    return 'Welcome Back'
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=80)
