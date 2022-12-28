@@ -38,7 +38,7 @@ def get_weather():
         weather_json = requests.get(url).json()
 
         # returning input and weather data to output html
-        return render_template('weather_output.html', data=weather_json, city_name=city)
+        return render_template('weather_output.html', data=weather_json, city_name=city, temp=weather_json[main[temp]])
 
     return render_template('weather.html')
 

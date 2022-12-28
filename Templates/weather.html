@@ -5,18 +5,22 @@
     <meta charset="utf-8">
     <title>Weather</title>
 
-    <link rel="stylesheet" href="/css/styles.css" type="text/css">
-
+    <link rel="stylesheet" href="/css/styles.css" type="text/css" />
 </head>
 
 <body>
-    <h1>Weather</h1>
+    <h1>Weather {{city_name}}</h1>
+
 
     <form action="/weather" method="post">
-        <p><label for="city">Type city name for weather information:</label><br> <input type="text" id="city"
-                name="city_name"><br></p>
-        <button type="submit">Submit</button>
+
+        <p><label for="city">Insert city name for weather information:</label></p><br> <input type="text" id="city"
+            name="city_name"><br>
+        <button type="submit">Check Weather</button>
     </form>
+    <p>Temperature: {{data.main.temp}} C </p>
+    <p> but feels like {{data.main.feels_like}} C, caused by wind speed of {{data.wind.speed}} m/s</p>
+    <p>{{data.message}}</p>
 </body>
 
 </html>
