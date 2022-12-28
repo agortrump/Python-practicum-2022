@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 import requests
 
-
 app = Flask(__name__,
             template_folder='templates',
             static_url_path='',
@@ -24,6 +23,7 @@ def welcome_back():
 
 
 # Weather information and city input
+
 @app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
     # Get input from HTML form
@@ -37,11 +37,8 @@ def get_weather():
         # requesting json from url
         weather_json = requests.get(url).json()
 
-        if 'sys' in weather_json:
-            # returning input and weather data to output html
-            return render_template('weather_output.html', data=weather_json, city_name=city)
-        else:
-            return render_template('not_found.html')
+        # returning input and weather data to output html
+        return render_template('weather_output.html', data=weather_json, city_name=city)
 
     return render_template('weather.html')
 
