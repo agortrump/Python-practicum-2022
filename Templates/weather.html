@@ -10,14 +10,21 @@
 
 <body>
     <h1>Weather {{city_name}}</h1>
+    <div id='city_form'>
+        <form action="/weather" method="post">
+            <p><label for="city">Insert city name for weather information:</label></p><input type="text" id="city"
+                name="city_name">
+            <button type="submit">Check Weather</button>
+        </form>
+    </div>
+    <div id="epty_form">
+        {% if city %}
+        <p>""</p>
+        {% else %}
+        <p>{{no_city}}</p>
+        {% endif %}
+    </div>
 
-
-    <form action="/weather" method="post">
-
-        <p><label for="city">Insert city name for weather information:</label></p><br> <input type="text" id="city"
-            name="city_name"><br>
-        <button type="submit">Check Weather</button>
-    </form>
 
 </body>
 

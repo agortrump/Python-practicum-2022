@@ -26,22 +26,26 @@ def welcome_back():
 # Weather information and city input
 @app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
+
     # Get input from HTML form
     if request.method == 'POST':
-        city = request.form.get('city_name')
-        city = city.capitalize()
-
+        city = request.form.get('city_name').capitalize()
+        # If nothing is typed in form return weather page
+        if len(city) == 0:
+            return render_template('weather.html', no_city="You should write the name of a city in the box")
         # Merging city and API address
-        url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
+        weather_url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
             city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric&mode=json'
 
-        # requesting json from url
-        weather_json = requests.get(url).json()
+        # Requesting data from url
+        weather_data = requests.get(weather_url).json()
 
-        if 'sys' in weather_json:
-            # returning input and weather data to output html
-            return render_template('weather_output.html', data=weather_json, city_name=city)
+        # Checking if city is in weather data
+        if city in weather_data.values():
+            # returning input and weather data to output html if city found in weather data
+            return render_template('weather_output.html', data=weather_data, city_name=city)
         else:
+            # If city not in weather data returning not found page
             return render_template('not_found.html')
 
     return render_template('weather.html')
