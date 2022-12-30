@@ -12,8 +12,6 @@ def get_weather(city):
     return weather_data
 
 
-get_weather()
-
 # print(get_weather('tallinn'))
 
 # print(get_weather('tallinn')['main']['temp'])
