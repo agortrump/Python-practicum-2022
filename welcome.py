@@ -4,7 +4,7 @@ import requests
 
 app = Flask(__name__,
             template_folder='templates',
-            static_url_path='',
+            static_url_path='/',
             static_folder='static')
 
 
@@ -26,7 +26,8 @@ def welcome_back():
 # Weather information and city input
 @app.route('/weather', methods=['GET', 'POST'])
 def get_weather():
-
+    api_key = '60aa068482d6ddc251ae5f53570ac5fb'
+    units = 'metric'
     # Get input from HTML form
     if request.method == 'POST':
         city = request.form.get('city_name').capitalize()
@@ -35,7 +36,7 @@ def get_weather():
             return render_template('weather.html', no_city="You should write the name of a city in the box")
         # Merging city and API address
         weather_url = 'https://api.openweathermap.org/data/2.5/weather?q=' + \
-            city + '&appid=60aa068482d6ddc251ae5f53570ac5fb&units=metric&mode=json'
+            city + '&appid=' + api_key + '&units=' + units + '&mode=json'
 
         # Requesting data from url
         weather_data = requests.get(weather_url).json()

@@ -9,11 +9,11 @@
 </head>
 
 <body>
-    <h1>Weather in {{city_name}}, {{data.sys.country}}</h1>
+    <h1>Weather in {{city}}, {{country}}</h1>
 
-    <p>Temperature: {{data.main.temp}} C </p>
-    <p> but feels like {{data.main.feels_like}} C, caused by wind speed of {{data.wind.speed}} m/s</p>
-    <p>{{data.message}}</p>
+    <p>Temperature: {{temp}} C </p>
+    <img src={{icon}}>
+    <p> but feels like {{feels_like}} C, caused by wind speed of {{wind}} m/s</p>
     <a href="/weather"><button type="button">Choose other</button></a>
 </body>
 
