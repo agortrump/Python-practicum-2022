@@ -4,26 +4,27 @@
 
 {% block content %}
 <h2>Weather in {{city}}{{country}}</h2>
-<div class="container">
-    <div class="row">
-        <div class="col-md-4" id="city_intput">
-            <form action="/weather" method="post">
-                <input type="text" id="city_name" name="city_name"><button type="submit">Check Weather</button>
+
+
+<div class="container sm">
+    <div class="row col-10 gy-2 ">
+        <div class="col-8 col-lg-6 gy-4">
+            <form>
+                <div class="form-control-plaintext">
+                    <label for="city_name">Which city's weather do you want to know?</label>
+                    <input type="text" id="city_name" name="city_name" class="form-control"
+                        placeholder="Insert city here" required>
+                </div>
+                <button>Check Weather</button>
             </form>
         </div>
-        <div class="col-md-6" id="weather_output">
+        <div class="col-8 col-lg-6 gy-4">
             <p>Temperature: {{temp}} C<br>but feels like {{feels_like}} C<br>
                 caused by wind speed of {{wind}} m/s</p>
             <img src={{icon}}>
-            <div id="empty_form">
-                {% if city_name %}
-                <p></p>
-                {% else %}
-                <p>{{no_input}}</p>
-                {% endif %}
-            </div>
         </div>
     </div>
 </div>
+
 
 {% endblock %}
