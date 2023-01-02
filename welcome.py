@@ -3,7 +3,7 @@ import requests
 
 
 app = Flask(__name__,
-            template_folder='templates',
+            template_folder='Templates',
             static_url_path='/',
             static_folder='static')
 
