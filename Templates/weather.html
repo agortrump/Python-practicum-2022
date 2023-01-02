@@ -7,10 +7,9 @@
 
 
 <div class="container">
-    <h2>Weather in {{%if country%}}
-        {{city}}{{country}}</h2>
-    <div class="row col-10 gy-2 ">
-        <div class="col-8 col-lg-6 gy-4">
+
+    <div class="row row-cols-2 ">
+        <div class="col-md-6 gy-4" id="city_input_form">
             <form action="/weather" method="post">
                 <div class="form-control-plaintext">
                     <label for="city_name">Which city's weather do you want to know?</label>
@@ -20,11 +19,35 @@
                 <button type="submit">Check Weather</button>
             </form>
         </div>
-        <div class="col-8 col-lg-6 gy-4">
+        <div class="col-md-4 gy-4" id="weather_output">
+            {% if city %} <h3>Weather in {{city}}, {{country}}</h3> {% else %} <h3>Weather</h3> {% endif %}
             <p>Temperature: {{temp}} C<br>but feels like {{feels_like}} C<br>
                 caused by wind speed of {{wind}} m/s</p>
             <img src={{icon}}>
         </div>
+        <div class="col">
+            Data{{data}}
+        </div>
+        <div class="col-md-4 gy-4" id="coordinates">
+            <h3>Coordinates</h3>
+            <p>Latitude: {{lat}}</p>
+            <p>Longitude: {{lat}}</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row row-col-2">
+        <div class="col" id="weather_history_chart">
+            <div class="card mb-3">
+                <div class="card-body p-3">
+                    <div class="chart">
+                        <canvas id="line-chart-gradient" class="chart-canvas" height="300px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

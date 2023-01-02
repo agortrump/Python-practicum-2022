@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request
 import requests
-
+from datetime import datetime, date
+import matplotlib.pyplot as plt
+from meteostat import Point, Daily
+import pandas as pd
 
 app = Flask(__name__,
             template_folder='templates',
@@ -44,14 +47,15 @@ def get_weather(city):
 
     return weather_data
 
-# CITY COORDINATES
+
+# CITY COORDINATES FROM API
 
 
 def get_coordinates(city):
     global coordinate_data
     # MERGING Coordinates API URL
     coordinates_url = 'http://api.openweathermap.org/geo/1.0/direct?q=' + \
-        city + ',' + get_weather['sys']['country'] + \
+        city + ',' + get_weather(city)['sys']['country'] + \
         '&limit=1&appid=' + api_key
 
     coordinate_data = requests.get(coordinates_url).json()
@@ -59,7 +63,36 @@ def get_coordinates(city):
     return coordinate_data
 
 
+# CITY COORDINATES VARIABLES
+lat = get_coordinates(city)[0]['lat']
+lon = get_coordinates(city)[0]['lon']
+
+
+# PYTHON METEOSTAT DATA
+
+# Set time period
+end = datetime.today()
+start = pd.to_datetime(end)-pd.DateOffset(years=1)
+
+# Create Point for Vancouver, BC
+city_point = Point(lat, lon)
+
+# Get daily data for 2018
+data = Daily(city_point, start, end)
+data = data.fetch()
+
+# Plot line chart including average, minimum and maximum temperature
+data.plot(y=['tavg', 'tmin', 'tmax'])
+# plt.show()
+
 # GET CITY FROM FORM
+
+
+@app.route('/weather_history')
+def wether_history(city):
+    data = data
+    return data
+
 
 @app.route('/weather', methods=['POST', 'GET'])
 def get_city(city='Tallinn'):
@@ -75,11 +108,12 @@ def get_city(city='Tallinn'):
                             feels_like=get_weather(city)['main']['feels_like'],
                             wind=get_weather(city)['wind']['speed'],
                             city=city,
-                            country=', ' + get_weather(city)['sys']['country'],
+                            country=get_weather(city)['sys']['country'],
                             icon='https://openweathermap.org/img/wn/' +
                             get_weather(city)[
         'weather'][0]['icon'] + '@2x.png',
-        country=get_weather['sys']['country']),
+        lat=lat,
+        lon=lon,),
         city)
 
 
