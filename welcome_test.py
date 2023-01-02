@@ -48,7 +48,7 @@ def get_weather(city):
 def get_city(city='Tallinn'):
     # Get input from HTML form
     if request.method == 'POST':
-        city = request.form('city_name_form').get('city_name').capitalize()
+        city = request.form.get('city_name').capitalize()
         # If nothing is typed in form return weather page
         if len(city) == 0:
             return render_template('weather.html', no_input="You should write the name of a city in the box!")
