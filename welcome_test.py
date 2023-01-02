@@ -88,10 +88,10 @@ data.plot(y=['tavg', 'tmin', 'tmax'])
 # GET CITY FROM FORM
 
 
-@app.route('/weather_history')
-def wether_history(city):
-    data = data
-    return data
+# @app.route('/weather_history')
+# def wether_history(city):
+#     data = data
+#     return data
 
 
 @app.route('/weather', methods=['POST', 'GET'])
