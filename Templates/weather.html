@@ -7,7 +7,8 @@
 
 
 <div class="container">
-    <h2>Weather in {{city}}{{country}}</h2>
+    <h2>Weather in {{%if country%}}
+        {{city}}{{country}}</h2>
     <div class="row col-10 gy-2 ">
         <div class="col-8 col-lg-6 gy-4">
             <form action="/weather" method="post">
