@@ -130,7 +130,6 @@ def get_city(city="Tallinn"):
             + "@2x.png",
             lat=get_coordinates(city)["lat"],
             lon=get_coordinates(city)["lon"],
-            weather_history=weather_history(city),
         ),
         city,
     )
@@ -170,5 +169,5 @@ def weather_history(city='Tallinn'):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=80)
-    # app.run()
+    # app.run(debug=True, host='0.0.0.0', port=80)
+    app.run()
