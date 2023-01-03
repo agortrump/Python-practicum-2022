@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request
 import requests
 from datetime import datetime, date
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+# import matplotlib.pyplot as plt
+# from matplotlib.figure import Figure
 from meteostat import Point, Daily
 import pandas as pd
-import base64
-from io import BytesIO
-from openpyxl.workbook import workbook
-import os
+# import base64
+# from io import BytesIO
+# from openpyxl.workbook import workbook
 
-path = os.getcwd()
 
 app = Flask(
     __name__, template_folder="templates", static_url_path="", static_folder="static"
