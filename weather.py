@@ -92,7 +92,11 @@ start = pd.to_datetime(end) - pd.DateOffset(years=1)
 
 # Create Point for City
 city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
-
+# Get daily data for last year
+historical_data = Daily(city_point, start, end)
+historical_data = historical_data.fetch()
+# Arranging hidtorical data to table and excel file
+historical_data = pd.DataFrame(historical_data)
 # Plot line chart including average, minimum and maximum temperature
 # historical_data.plot(y=["tavg", "tmin", "tmax"])
 # plt.show()
@@ -108,11 +112,6 @@ def get_city(city="Tallinn"):
         # If city not in values, return could not find
         if city not in get_weather(city).values():
             return render_template("weather.html", no_city="Could not find such city")
-        # Get daily data for last year
-        historical_data = Daily(city_point, start, end)
-        historical_data = historical_data.fetch()
-        # Arranging hidtorical data to table and excel file
-        historical_data = pd.DataFrame(historical_data)
 
     return (
         render_template(
