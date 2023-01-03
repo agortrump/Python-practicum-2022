@@ -159,16 +159,5 @@ def get_city(city="Tallinn"):
     )
 
 
-# # Get daily data for last year
-# historical_data = Daily(city_point, start, end)
-# historical_data = historical_data.fetch()
-
-# # Arranging hidtorical data to table and excel file
-# historical_data = pd.DataFrame(historical_data)
-# historical_excel = historical_data.to_excel(
-#     "history.xlsx", sheet_name=city + "_history"
-# )
-
-
 if __name__ == "__main__":
     app.run(debug=True)
