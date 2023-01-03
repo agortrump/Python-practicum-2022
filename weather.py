@@ -155,20 +155,20 @@ def weather_history(city='Tallinn'):
     return 'ajalugu'
 
 
-@app.route("/weather_history", methods=["POST"])
-def weather_graph(city):
-    fig = Figure()
-    ax = fig.subplots()
-    ax.plot([1, 2])
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    return f"graph_data:image/png;base64,{graph_data}"
+# @app.route("/weather_history", methods=["POST"])
+# def weather_graph(city):
+#     fig = Figure()
+#     ax = fig.subplots()
+#     ax.plot([1, 2])
+#     # Save it to a temporary buffer.
+#     buf = BytesIO()
+#     fig.savefig(buf, format="png")
+#     # Embed the result in the html output.
+#     graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+#     return f"graph_data:image/png;base64,{graph_data}"
 
 
-history_graph = weather_graph(city)
+# history_graph = weather_graph(city)
 
 
 if __name__ == "__main__":
