@@ -102,22 +102,6 @@ city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
 # GET CITY FROM FORM
 
 
-@app.route("/weather_history", methods=["POST"])
-def weather_history(city):
-    fig = Figure()
-    ax = fig.subplots()
-    ax.plot([1, 2])
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    return f"graph_data:image/png;base64,{graph_data}"
-
-
-history_graph = weather_history(city)
-
-
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     # Get input from HTML form
@@ -134,9 +118,6 @@ def get_city(city="Tallinn"):
         historical_data = historical_data.fetch()
         # Arranging hidtorical data to table and excel file
         historical_data = pd.DataFrame(historical_data)
-        historical_excel = historical_data.to_excel(
-            "history/history.xlsx", sheet_name=city + "_history"
-        )
 
     return (
         render_template(
@@ -152,12 +133,44 @@ def get_city(city="Tallinn"):
             lat=get_coordinates(city)["lat"],
             lon=get_coordinates(city)["lon"],
             weather_history=weather_history(city),
-            # historical_data=historical_data,
-            # historical_excel=historical_excel,
         ),
         city,
     )
 
 
+@app.route("/weather_history", methods=["GET"])
+def weather_history(city='Tallinn'):
+    if request.method == 'GET':
+        # Create Point for City
+        city_point = Point(get_coordinates(
+            city)["lat"], get_coordinates(city)["lon"])
+        # Get daily data for last year
+        historical_data = Daily(city_point, start, end)
+        historical_data = historical_data.fetch()
+        # Arranging hidtorical data to table and excel file
+        historical_data = pd.DataFrame(historical_data)
+        return historical_data.to_excel(
+            "history/history.xlsx", sheet_name=city + "_history"
+        )
+    return 'ajalugu'
+
+
+@app.route("/weather_history", methods=["POST"])
+def weather_graph(city):
+    fig = Figure()
+    ax = fig.subplots()
+    ax.plot([1, 2])
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    return f"graph_data:image/png;base64,{graph_data}"
+
+
+history_graph = weather_graph(city)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=80)
+    # app.run()
