@@ -1,4 +1,4 @@
 {
     "python.defaultInterpreterPath": "/Users/agortrump/Documents/GitHub/practicum_env/bin/python3",
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "autopep8"
 }

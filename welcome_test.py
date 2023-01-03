@@ -8,10 +8,12 @@ import pandas as pd
 import base64
 from io import BytesIO
 from openpyxl.workbook import workbook
+import os
 
+path = os.getcwd()
 
 app = Flask(
-    __name__, template_folder="Templates", static_url_path="", static_folder="static"
+    __name__, template_folder="templates", static_url_path="", static_folder="static"
 )
 
 
@@ -90,6 +92,8 @@ lon = get_coordinates(city)["lon"]
 end = datetime.today()
 start = pd.to_datetime(end) - pd.DateOffset(years=1)
 
+# Create Point for City
+city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
 
 # Plot line chart including average, minimum and maximum temperature
 # historical_data.plot(y=["tavg", "tmin", "tmax"])
@@ -123,14 +127,15 @@ def get_city(city="Tallinn"):
         if city not in get_weather(city).values():
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
-        city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
+        city_point = Point(get_coordinates(
+            city)["lat"], get_coordinates(city)["lon"])
         # Get daily data for last year
         historical_data = Daily(city_point, start, end)
         historical_data = historical_data.fetch()
         # Arranging hidtorical data to table and excel file
         historical_data = pd.DataFrame(historical_data)
         historical_excel = historical_data.to_excel(
-            "history.xlsx", sheet_name=city + "_history"
+            "history/history.xlsx", sheet_name=city + "_history"
         )
 
     return (
@@ -147,25 +152,22 @@ def get_city(city="Tallinn"):
             lat=get_coordinates(city)["lat"],
             lon=get_coordinates(city)["lon"],
             weather_history=weather_history(city),
-            historical_data=historical_data,
-            historical_excel=historical_excel,
+            # historical_data=historical_data,
+            # historical_excel=historical_excel,
         ),
         city,
     )
 
 
-# Create Point for City
-city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
+# # Get daily data for last year
+# historical_data = Daily(city_point, start, end)
+# historical_data = historical_data.fetch()
 
-# Get daily data for last year
-historical_data = Daily(city_point, start, end)
-historical_data = historical_data.fetch()
-
-# Arranging hidtorical data to table and excel file
-historical_data = pd.DataFrame(historical_data)
-historical_excel = historical_data.to_excel(
-    "history.xlsx", sheet_name=city + "_history"
-)
+# # Arranging hidtorical data to table and excel file
+# historical_data = pd.DataFrame(historical_data)
+# historical_excel = historical_data.to_excel(
+#     "history.xlsx", sheet_name=city + "_history"
+# )
 
 
 if __name__ == "__main__":
