@@ -59,6 +59,12 @@ def get_weather(city):
     return weather_data
 
 
+# PYTHON METEOSTAT DATA
+
+# Set time period
+end = datetime.today()
+start = pd.to_datetime(end) - pd.DateOffset(years=1)
+
 # CITY COORDINATES FROM API
 
 
@@ -79,16 +85,15 @@ def get_coordinates(city):
     return coordinate_data[0]
 
 
+def history_xls(city):
+    return render_template("weather_history.html"), historical_data.to_excel(
+        "history/history.xlsx", sheet_name=city + "_history"
+    )
+
+
 # CITY COORDINATES VARIABLES
-lat = get_coordinates(city)["lat"]
-lon = get_coordinates(city)["lon"]
-
-
-# PYTHON METEOSTAT DATA
-
-# Set time period
-end = datetime.today()
-start = pd.to_datetime(end) - pd.DateOffset(years=1)
+# lat = get_coordinates(city)["lat"]
+# lon = get_coordinates(city)["lon"]
 
 
 # Plot line chart including average, minimum and maximum temperature
@@ -98,24 +103,10 @@ start = pd.to_datetime(end) - pd.DateOffset(years=1)
 # GET CITY FROM FORM
 
 
-@app.route("/weather_history", methods=["POST"])
-def weather_history(city):
-    fig = Figure()
-    ax = fig.subplots()
-    ax.plot([1, 2])
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    return f"graph_data:image/png;base64,{graph_data}"
-
-
-history_graph = weather_history(city)
-
-
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
+    global historical_data
+    global excel_file
     # Get input from HTML form
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
@@ -127,11 +118,7 @@ def get_city(city="Tallinn"):
         # Get daily data for last year
         historical_data = Daily(city_point, start, end)
         historical_data = historical_data.fetch()
-        # Arranging hidtorical data to table and excel file
-        historical_data = pd.DataFrame(historical_data)
-        historical_excel = historical_data.to_excel(
-            "history.xlsx", sheet_name=city + "_history"
-        )
+        excel_file = history_xls(city)
 
     return (
         render_template(
@@ -146,27 +133,28 @@ def get_city(city="Tallinn"):
             + "@2x.png",
             lat=get_coordinates(city)["lat"],
             lon=get_coordinates(city)["lon"],
-            weather_history=weather_history(city),
-            historical_data=historical_data,
-            historical_excel=historical_excel,
         ),
         city,
     )
 
 
-# Create Point for City
-city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
+@app.route("/weather_history", methods=["GET"])
+def weather_history():
+    excel_file
+    return render_template("weather_history.html")
 
-# Get daily data for last year
-historical_data = Daily(city_point, start, end)
-historical_data = historical_data.fetch()
+    # fig = Figure()
+    # ax = fig.subplots()
+    # ax.plot([1, 2])
+    # # Save it to a temporary buffer.
+    # buf = BytesIO()
+    # fig.savefig(buf, format="png")
+    # # Embed the result in the html output.
+    # graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    # return f"graph_data:image/png;base64,{graph_data}"
 
-# Arranging hidtorical data to table and excel file
-historical_data = pd.DataFrame(historical_data)
-historical_excel = historical_data.to_excel(
-    "history.xlsx", sheet_name=city + "_history"
-)
+    # history_graph = weather_history(city)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=80)

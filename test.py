@@ -52,14 +52,20 @@ start = pd.to_datetime(end) - pd.DateOffset(years=1)
 # Create Point for Vancouver, BC
 city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
 
-# Get daily data for 2018
-data = Daily(city_point, start, end)
-data = data.fetch()
 
-data = pd.DataFrame(data)
-data_xlsx = data.to_excel("data_excel.xlsx", sheet_name=city + "_history")
+def weather_history(city="tallinn"):
+    # Get daily data for 2018
+    # Create Point for City
+    city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
+    # Get daily data for last year
+    historical_data = Daily(city_point, start, end)
+    historical_data = historical_data.fetch()
+    # Arranging hidtorical data to table and excel file
+    historical_data = pd.DataFrame(historical_data)
+    return historical_data
 
-print(data)
+
+print(weather_history(city="kuressaare"))
 
 # print(get_coordinates("Tallinn"))
 # print(lat, lon)
