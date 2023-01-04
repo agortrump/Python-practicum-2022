@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory, send_file
 import requests
 from datetime import datetime, date
 import matplotlib.pyplot as plt
@@ -15,24 +15,12 @@ app = Flask(
 )
 
 
-@app.route("/")
-def welcome():
-    return render_template("index.html")
-
-
-@app.route("/welcome/home")
-def welcome_home():
-    return "Welcome Home"
-
-
-@app.route("/welcome/back")
-def welcome_back():
-    return "Welcome Back"
-
-
 # Default city
 city = "Tallinn"
-
+try:
+    city_input
+except NameError:
+    city_input = "Tallinn"
 
 # API data
 api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
@@ -99,6 +87,11 @@ city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
 # WEATHER PAGE ROUTING
 
 
+@app.route("/")
+def welcome():
+    return render_template("index.html")
+
+
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     global city_input
@@ -122,8 +115,8 @@ def get_city(city="Tallinn"):
             icon="https://openweathermap.org/img/wn/"
             + get_weather(city)["weather"][0]["icon"]
             + "@2x.png",
-            lat=get_coordinates(city_input)["lat"],
-            lon=get_coordinates(city_input)["lon"],
+            lat=get_coordinates(city)["lat"],
+            lon=get_coordinates(city)["lon"],
         ),
         city,
     )
@@ -141,17 +134,30 @@ def weather_history():
         "history/history.xlsx", sheet_name=city_input + "_history"
     )
 
-    # fig = Figure()
-    # ax = fig.subplots()
-    # ax.plot([1, 2])
-    # # Save it to a temporary buffer.
-    # buf = BytesIO()
-    # fig.savefig(buf, format="png")
-    # # Embed the result in the html output.
-    # graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    # return f"graph_data:image/png;base64,{graph_data}"
 
-    # history_graph = weather_history(city)
+@app.route("/history/history.xlsx", methods=["GET"])
+def weather_xlsx():
+    return send_file(
+        # File path for Linux/Mac
+        # "../history/history.xlsx"#
+        # File path for Windows
+        ".\\history\\history.xlsx",
+        download_name=city_input + " history.xlsx",
+        as_attachment=True,
+    )
+
+
+# fig = Figure()
+# ax = fig.subplots()
+# ax.plot([1, 2])
+# # Save it to a temporary buffer.
+# buf = BytesIO()
+# fig.savefig(buf, format="png")
+# # Embed the result in the html output.
+# graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+# return f"graph_data:image/png;base64,{graph_data}"
+
+# history_graph = weather_history(city)
 
 
 if __name__ == "__main__":
