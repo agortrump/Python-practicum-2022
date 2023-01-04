@@ -65,7 +65,38 @@ def weather_history(city="tallinn"):
     return historical_data
 
 
-print(weather_history(city="kuressaare"))
+# Get daily data for 2018
+city = "Türi"
+# Create Point for City
+city_point = Point(get_coordinates(city)["lat"], get_coordinates(city)["lon"])
+# Get daily data for last year
+historical_data = Daily(city_point, start, end)
+historical_data = historical_data.fetch()
+# Arranging hidtorical data to table and excel file
+historical_data = pd.DataFrame(historical_data).reset_index()
+historical_data["time"] = historical_data["time"].dt.date
+historical_temp_data = historical_data.iloc[:, :4]
+max_temp_row = historical_temp_data[
+    historical_temp_data["tmax"] == historical_temp_data["tmax"].max()
+]
+
+min_temp_row = historical_temp_data[
+    historical_temp_data["tmin"] == historical_temp_data["tmin"].min()
+]
+
+max_temp = max_temp_row["tmax"].values[0]
+min_temp = min_temp_row["tmin"].values[0]
+
+min_temp_date = min_temp_row["time"].values[0]
+max_temp_date = max_temp_row["time"].values[0]
+
+print(historical_data)
+print(max_temp)
+print(min_temp)
+print(max_temp_date)
+print(min_temp_date)
+
+# print(weather_history(city="kuressaare"))
 
 # print(get_coordinates("Tallinn"))
 # print(lat, lon)

@@ -127,9 +127,29 @@ def weather_history():
     # Get daily data for last year
     historical_data = Daily(city_point, start, end)
     historical_data = historical_data.fetch()
-
+    # Data to dataframe and reseting index
+    historical_data = pd.DataFrame(historical_data).reset_index()
+    # set data type for time column to date
+    historical_data["time"] = historical_data["time"].dt.date
+    # selecting only temperature and date data
+    historical_temp_data = historical_data.iloc[:, :4]
+    # Finding MAX and MIN temp values and dates
+    max_temp_row = historical_temp_data[
+        historical_temp_data["tmax"] == historical_temp_data["tmax"].max()
+    ]
+    min_temp_row = historical_temp_data[
+        historical_temp_data["tmin"] == historical_temp_data["tmin"].min()
+    ]
     return (
-        render_template("weather_history.html", city=city_input)
+        render_template(
+            "weather_history.html",
+            city=city_input,
+            max_temp=max_temp_row["tmax"].values[0],
+            min_temp=min_temp_row["tmin"].values[0],
+            # Get MIN and MAX temp date
+            min_temp_date=min_temp_row["time"].values[0],
+            max_temp_date=max_temp_row["time"].values[0],
+        )
     ), historical_data.to_excel(
         "history/history.xlsx", sheet_name=city_input + "_history"
     )
@@ -139,9 +159,9 @@ def weather_history():
 def weather_xlsx():
     return send_file(
         # File path for Linux/Mac
-        # "../history/history.xlsx"#
+        "history/history.xlsx",
         # File path for Windows
-        ".\\history\\history.xlsx",
+        # ".\\history\\history.xlsx",
         download_name=city_input + " history.xlsx",
         as_attachment=True,
     )
@@ -156,8 +176,6 @@ def weather_xlsx():
 # # Embed the result in the html output.
 # graph_data = base64.b64encode(buf.getbuffer()).decode("ascii")
 # return f"graph_data:image/png;base64,{graph_data}"
-
-# history_graph = weather_history(city)
 
 
 if __name__ == "__main__":
