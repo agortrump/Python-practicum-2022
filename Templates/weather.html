@@ -31,10 +31,16 @@
             <p>Latitude: {{lat}}</p>
             <p>Longitude: {{lon}}</p>
         </div>
-        <div class="col" action="/weather_history" method="POST">
-            <a href='../history.xlsx' download>Historical Data exel file</a>
+
+        <div method="get">
+            <!-- <a href="/weather_history" method="GET">Look last year weather history of {{city}}</a> -->
+            <a href='../history/history.xlsx' action="/weather_history" download="{{city}} weather history.xlsx"
+                method="GET">Historical Data
+                EXCEL file</a>
         </div>
+
     </div>
+
 </div>
 
 <div class="container">
