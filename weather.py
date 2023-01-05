@@ -35,7 +35,7 @@ start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
 
 @app.route("/")
 def welcome():
-    return render_template("index.html")
+    return render_template("main.html")
 
 
 @app.route("/weather", methods=["POST", "GET"])
