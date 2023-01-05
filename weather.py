@@ -137,10 +137,10 @@ def weather_history():
         max_temp=historical_data["tmax"].max(),
         min_temp=historical_data["tmin"].min(),
         avg_temp=historical_data["tavg"].mean().round(decimals=2),
-        max_temp_date=max_temp_date.strftime("%-d.%b.%Y"),
-        min_temp_date=min_temp_date.strftime("%-d.%b.%Y"),
-        start_date=start_date.strftime("%-d.%b.%Y"),
-        end_date=end_date.strftime("%-d.%b.%Y"),
+        max_temp_date=max_temp_date.strftime("%-d.%m.%Y"),
+        min_temp_date=min_temp_date.strftime("%-d.%m.%Y"),
+        start_date=start_date.strftime("%-d.%m.%Y"),
+        end_date=end_date.strftime("%-d.%m.%Y"),
     )
 
 
@@ -196,5 +196,5 @@ def weather_graph():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, host="0.0.0.0", port=80)
-    app.run()
+    app.run(debug=True, host="0.0.0.0", port=80)
+    # app.run()
