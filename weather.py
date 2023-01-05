@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, Response, send_file
 import requests
 from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -22,6 +23,14 @@ city_input = "Tallinn"
 # API data
 api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
 units = "metric"
+
+# Set time period
+end_date = datetime.today()
+start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
+
+# end_date = date.today()
+# start_date = date.today() - relativedelta(years=1)
+
 
 # WEATHER PAGE ROUTING
 
@@ -82,9 +91,6 @@ def get_weather(city=city_input):
 
 # PYTHON METEOSTAT DATA
 
-# Set time period
-end = datetime.today()
-start = pd.to_datetime(end) - pd.DateOffset(years=1)
 
 # CITY COORDINATES FROM API
 
@@ -113,33 +119,30 @@ def weather_history():
         get_coordinates(city_input)["lat"], get_coordinates(city_input)["lon"]
     )
     # Get daily data for last year
-    historical_data = Daily(city_point, start, end)
+    historical_data = Daily(city_point, start_date, end_date)
     historical_data = historical_data.fetch()
     # Data to dataframe and reseting index
     historical_data = pd.DataFrame(historical_data).reset_index()
     # set data type for time column to date
     historical_data["time"] = historical_data["time"].dt.date
-    # selecting only temperature and date data
-    historical_temp_data = historical_data.iloc[:, :4]
     # Finding MAX and MIN temp values and dates
-    max_temp_row = historical_temp_data[
-        historical_temp_data["tmax"] == historical_temp_data["tmax"].max()
-    ]
-    min_temp_row = historical_temp_data[
-        historical_temp_data["tmin"] == historical_temp_data["tmin"].min()
-    ]
-    return (
-        render_template(
-            "weather_history.html",
-            city=city_input,
-            max_temp=max_temp_row["tmax"].values[0],
-            min_temp=min_temp_row["tmin"].values[0],
-            # Get MIN and MAX temp date
-            min_temp_date=min_temp_row["time"].values[0],
-            max_temp_date=max_temp_row["time"].values[0],
-        )
-    ), historical_data.to_excel(
-        "history/history.xlsx", sheet_name=city_input + "_history"
+    max_temp_date = historical_data.loc[
+        historical_data.tmax == historical_data.tmax.max(), "time"
+    ].item()
+    min_temp_date = historical_data.loc[
+        historical_data.tmin == historical_data.tmin.min(), "time"
+    ].item()
+
+    return render_template(
+        "weather_history.html",
+        city=city_input,
+        max_temp=historical_data["tmax"].max(),
+        min_temp=historical_data["tmin"].min(),
+        avg_temp=historical_data["tavg"].mean().round(decimals=2),
+        max_temp_date=max_temp_date.strftime("%-d.%b.%Y"),
+        min_temp_date=min_temp_date.strftime("%-d.%b.%Y"),
+        start_date=start_date.strftime("%-d.%b.%Y"),
+        end_date=end_date.strftime("%-d.%b.%Y"),
     )
 
 
@@ -148,16 +151,22 @@ def plot_png():
 
     historical_data
 
-    fig = Figure()
+    fig = Figure(figsize=(10, 6), dpi=200)
+
     axis = fig.add_subplot(1, 1, 1)
     date = historical_data["time"]
     tmax = historical_data["tmax"]
     tmin = historical_data["tmin"]
     tavg = historical_data["tavg"]
+    city = city_input
     axis.plot(date, tmax, label="Max Temp")
     axis.plot(date, tmin, label="Min Temp")
     axis.plot(date, tavg, label="AVG Temp")
+    axis.set_title("Weather graph of " + city)
+    axis.set_ylabel("Temperature C")
+    axis.set_xlabel("Date")
     axis.legend()
+    fig.savefig("history/graph.pdf", dpi=200)
     output = io.BytesIO()
     # pdf = fig.savefig("history/graph.pdf")
     FigureCanvasAgg(fig).print_png(output)
@@ -172,6 +181,18 @@ def weather_xlsx():
         # File path for Windows
         # ".\\history\\history.xlsx",
         download_name=city_input + " history.xlsx",
+        as_attachment=True,
+    )
+
+
+@app.route("/history/graph.pdf", methods=["GET"])
+def weather_graph():
+    return send_file(
+        # File path for Linux/Mac
+        "history/graph.pdf",
+        # File path for Windows
+        # ".\\history\\graph.pdf",
+        download_name=city_input + " weather graph.pdf",
         as_attachment=True,
     )
 
