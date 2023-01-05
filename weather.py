@@ -16,8 +16,8 @@ app = Flask(
 
 # Default city and coordinates
 city_input = "Tallinn"
-lat = 59.4372155
-lon = 24.7453688
+# lat = 59.4372155
+# lon = 24.7453688
 
 
 # API data
@@ -64,10 +64,10 @@ def get_city(city="Tallinn"):
             + "@2x.png",
             lat_output=lat,
             lon_output=lon,
-            # map_src=('https://www.openstreetmap.org/export/embed.html?bbox=' + str(lon) +
-            #          '%2C' + str(lat) + '%2C'+str(lon+0.2) + '%2C' + str(lat+0.0) + '&amplayer=mapnik'),
-            # map_link=('https://www.openstreetmap.org/#map=10/' +
-            #           str(lat) + '/' + str(lon))
+            map_src=('https://www.openstreetmap.org/export/embed.html?bbox=' + str(lon) +
+                     '%2C' + str(lat) + '%2C'+str(lon+0.2) + '%2C' + str(lat+0.0) + '&amplayer=mapnik'),
+            map_link=('https://www.openstreetmap.org/#map=10/' +
+                      str(lat) + '/' + str(lon))
         ),
         city,
     )
