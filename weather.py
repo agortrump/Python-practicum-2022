@@ -14,9 +14,11 @@ app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
 )
 
-# Default city
-
+# Default city and coordinates
 city_input = "Tallinn"
+lat = 59.4025
+lon = 24.8140
+
 
 # API data
 api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
@@ -26,12 +28,8 @@ units = "metric"
 end_date = datetime.today()
 start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
 
-# end_date = date.today()
-# start_date = date.today() - relativedelta(years=1)
 
-
-# WEATHER PAGE ROUTING
-
+#### Routing Pages ###
 
 @app.route("/")
 def welcome():
@@ -41,6 +39,8 @@ def welcome():
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     global city_input
+    global lat
+    global lon
     # Get input from HTML form
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
@@ -62,18 +62,18 @@ def get_city(city="Tallinn"):
             icon="https://openweathermap.org/img/wn/"
             + get_weather(city)["weather"][0]["icon"]
             + "@2x.png",
+            lat_output=lat,
+            lon_output=lon,
             map_src=('https://www.openstreetmap.org/export/embed.html?bbox=' + str(lon) +
                      '%2C' + str(lat) + '%2C'+str(lon+0.2) + '%2C' + str(lat+0.0) + '&amplayer=mapnik'),
             map_link=('https://www.openstreetmap.org/#map=10/' +
-                      str(lat) + '/' + str(lon)),
-            lat=lat,
-            lon=lon
+                      str(lat) + '/' + str(lon))
         ),
         city,
     )
 
 
-# WEATHER API CALL
+### WEATHER API CALL ##
 
 
 def get_weather(city=city_input):
@@ -92,10 +92,6 @@ def get_weather(city=city_input):
 
     return weather_data
 
-
-# PYTHON METEOSTAT DATA
-
-
 # CITY COORDINATES FROM API
 
 
@@ -108,21 +104,19 @@ def get_coordinates(city=city_input):
         + ","
         + get_weather(city)["sys"]["country"]
         + "&limit=1&appid="
-        + api_key
-    )
-
+        + api_key)
     coordinate_data = requests.get(coordinates_url).json()
-
     return coordinate_data[0]
+
+#### ROUTING WEATHER HISTORY ####
 
 
 @app.route("/weather_history", methods=["GET"])
 def weather_history():
     global historical_data
-    city_point = Point(
-        get_coordinates(city_input)["lat"], get_coordinates(city_input)["lon"]
-    )
-    # Get daily data for last year
+    city_point = Point(get_coordinates(city_input)[
+                       "lat"], get_coordinates(city_input)["lon"])
+    # Get daily data for last year from METEOSTAT
     historical_data = Daily(city_point, start_date, end_date)
     historical_data = historical_data.fetch()
     # Data to dataframe and reseting index
@@ -148,6 +142,8 @@ def weather_history():
         start_date=start_date.strftime("%-d.%m.%Y"),
         end_date=end_date.strftime("%-d.%m.%Y"),
     )
+
+#### ROUTING WEATHER GRAPH PLOT ###
 
 
 @app.route("/plot")
@@ -177,6 +173,9 @@ def plot_png():
     return Response(output.getvalue(), mimetype="image/png")
 
 
+### DOWNLOAD FILES ####
+
+# route for xlsx file
 @app.route("/history/history.xlsx", methods=["GET"])
 def weather_xlsx():
     return send_file(
@@ -187,6 +186,8 @@ def weather_xlsx():
         download_name=city_input + " history.xlsx",
         as_attachment=True,
     )
+
+# route for graph pdf
 
 
 @app.route("/history/graph.pdf", methods=["GET"])
