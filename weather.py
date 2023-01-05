@@ -49,6 +49,8 @@ def get_city(city="Tallinn"):
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
         city_input = city
+        lat = get_coordinates(city_input)["lat"]
+        lon = get_coordinates(city_input)["lon"]
     return (
         render_template(
             "weather.html",
@@ -60,8 +62,12 @@ def get_city(city="Tallinn"):
             icon="https://openweathermap.org/img/wn/"
             + get_weather(city)["weather"][0]["icon"]
             + "@2x.png",
-            lat=get_coordinates(city)["lat"],
-            lon=get_coordinates(city)["lon"],
+            map_src=('https://www.openstreetmap.org/export/embed.html?bbox=' + str(lon) +
+                     '%2C' + str(lat) + '%2C'+str(lon+0.2) + '%2C' + str(lat+0.0) + '&amplayer=mapnik'),
+            map_link=('https://www.openstreetmap.org/#map=10/' +
+                      str(lat) + '/' + str(lon)),
+            lat=lat,
+            lon=lon
         ),
         city,
     )
