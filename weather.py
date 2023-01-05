@@ -7,10 +7,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
-import base64
 import io
-import numpy as np
-import pdfkit
+
 
 app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
