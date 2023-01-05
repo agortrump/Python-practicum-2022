@@ -24,6 +24,9 @@
             <p>Temperature: {{temp}} C<br>Feels like {{feels_like}} C<br>
                 Wind speed of {{wind}} m/s</p>
             <img src={{icon}}>
+            <div class="col" action="/weather_history" method="GET">
+                <a href='/weather_history'>Look weather history for {{city}}</a>
+            </div>
         </div>
 
         <div class="col-md-4 gy-4" id="coordinates">
@@ -32,29 +35,7 @@
             <p>Longitude: {{lon}}</p>
         </div>
 
-        <div method="get">
-            <!-- <a href="/weather_history" method="GET">Look last year weather history of {{city}}</a> -->
-            <a href='../history/history.xlsx' action="/weather_history" download="{{city}} weather history.xlsx"
-                method="GET">Historical Data
-                EXCEL file</a>
-        </div>
-
-    </div>
-
-</div>
-
-<div class="container">
-    <div class="row row-col-2">
-        <div class="col" id="weather_history_chart">
-            <div class="card mb-3">
-                <div class="card-body p-3">
-                    <div class="chart">
-                        <img href={{weather_history}} />
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
+
 {% endblock %}

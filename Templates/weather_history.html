@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Python Practicum 2022{% endblock %}
+{% block header %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row" id="header">
+        <h2>Weather history of {{city}}</h2>
+    </div>
+    <div class="row row-cols ">
+        <div class="col-md-3 gy-5" id="weather_history">
+            <h5>Weather history from {{start_date}} to today </h5><br>
+            <h6>MIN Temperature</h6>
+            <p>on {{min_temp_date}}: {{min_temp}} C </p>
+            <h6>MAX Temperature</h6>
+            <p>on {{max_temp_date}}: {{max_temp}} C</p><br>
+            <h6>AVG Temperature</h6>
+            <p>{{avg_temp}} C</p>
+            <a href='../history/history.xlsx' download="{{city}} weather.xlsx" method="GET">Download {{city}}
+                history in
+                EXCEL</a>
+            <a href='../history/graph.pdf' download="{{city}} weather graph.pdf" method="GET">Download
+                {{city}}
+                history graph PDF</a>
+        </div>
+        <div class="col-md-9" id="weather_plot">
+            <div class="row" href="/plot">
+                <img src="/plot">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+
+</div>
+</div>
+{% endblock %}
