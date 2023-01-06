@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% block title %}Python Practicum 2022{% endblock %}
 {% block header %}{% endblock %}
 
@@ -7,17 +7,21 @@
 <div class="container">
 
     <div class="row row-cols ">
-        <div class="col-md-4 gy-4" id="city_input_form">
-            <form action="/weather" method="post">
-                <div class="form-control-plaintext">
-                    <label for="city_name">
-                        <h5>City Name</h5>
-                    </label>
-                    <input type="text" id="city_name" name="city_name" class="form-control"
-                        placeholder="Insert city here" required>
+        <div class="col-md-4 gy-4">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/weather" method="post">
+                        <div class="form-control-plaintext">
+                            <label for="city_name">
+                                <h5>City Name</h5>
+                            </label>
+                            <input type="text" id="city_name" name="city_name" class="form-control"
+                                placeholder="Insert city here" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Check weather</button>
+                    </form>
                 </div>
-                <button type="submit">Check Weather</button>
-            </form>
+            </div>
         </div>
         <div class="col-md-4 gy-4" id="weather_output">
             {% if city %} <h3>Weather in {{city}}, {{country}}</h3> {% else %} <h3>Weather</h3> {% endif %}
@@ -25,14 +29,18 @@
                 Wind speed of {{wind}} m/s</p>
             <img src={{icon}}>
             <div class="col" action="/weather_history" method="GET">
-                <a href='/weather_history'>Look weather history for {{city}}</a>
+                <a href='/weather_history'>Weather history for {{city}}</a>
             </div>
         </div>
 
         <div class="col-md-4 gy-4" id="coordinates">
             <h3>Coordinates</h3>
-            <p>Latitude: {{lat}}</p>
-            <p>Longitude: {{lon}}</p>
+            <p>Latitude: {{lat_output}}</p>
+            <p>Longitude: {{lon_output}}</p>
+
+            <iframe width="450" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                src={{map_src}} style="border: 1px solid black"></iframe><br /><small><a href={{map_link}}>View Larger
+                    Map</a></small>
         </div>
 
     </div>
