@@ -16,8 +16,8 @@ app = Flask(
 
 # Default city and coordinates
 city_input = "Tallinn"
-lat = 59.4372155
-lon = 24.7453688
+# lat = 59.4372155
+# lon = 24.7453688
 
 
 # API data
@@ -49,8 +49,8 @@ def get_city(city="Tallinn"):
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
         city_input = city
-        # lat = get_coordinates(city_input)["lat"]
-        # lon = get_coordinates(city_input)["lon"]
+        lat = get_coordinates(city_input)["lat"]
+        lon = get_coordinates(city_input)["lon"]
     return (
         render_template(
             "weather.html",
@@ -107,6 +107,7 @@ def get_coordinates(city=city_input):
         + api_key)
     coordinate_data = requests.get(coordinates_url).json()
     return coordinate_data[0]
+
 
 #### ROUTING WEATHER HISTORY ####
 
