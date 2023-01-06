@@ -27,11 +27,12 @@ mounts:
 disk: 2048
 dependencies:
   python3:
-    pipenv: "2022.3.1"
+    pipenv: "22.3.1"
 
 hooks:
     build: |
       pipenv install --system --deploy
+
 
 web:
   commands: 
