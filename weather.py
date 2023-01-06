@@ -39,8 +39,8 @@ def welcome():
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     global city_input
-    global lat
-    global lon
+    lat = get_coordinates(city_input)["lat"]
+    lon = get_coordinates(city_input)["lon"]
     # Get input from HTML form
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
@@ -49,8 +49,7 @@ def get_city(city="Tallinn"):
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
         city_input = city
-        lat = get_coordinates(city_input)["lat"]
-        lon = get_coordinates(city_input)["lon"]
+
     return (
         render_template(
             "weather.html",
@@ -179,6 +178,8 @@ def plot_png():
 # route for xlsx file
 @app.route("/history/history.xlsx", methods=["GET"])
 def weather_xlsx():
+    historical_data.to_excel('history/history.xlsx',
+                             sheet_name=city_input+'_history')
     return send_file(
         # File path for Linux/Mac
         "history/history.xlsx",
