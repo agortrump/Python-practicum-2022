@@ -27,7 +27,7 @@ mounts:
 disk: 2048
 dependencies:
   python3:
-    pipeenv: "22.3.1"
+    pipenv: "22.3.1"
 
 hooks:
     build: |
