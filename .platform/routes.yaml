@@ -1,8 +1,8 @@
 # Each route describes how an incoming URL is going to be processed by Platform.sh.
-"https://www.main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/":
+"https://main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/":
     type: upstream
     upstream: "app:http"
 
 "https://{default}/":
     type: redirect
-    to: "https://www.main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/"
+    to: "https://main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/"
