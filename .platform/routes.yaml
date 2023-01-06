@@ -5,4 +5,4 @@
 
 "https://{default}/":
     type: redirect
-    to: "https://www.{default}/"
+    to: "https://www.main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/"
