@@ -19,9 +19,16 @@ mounts:
     source: local
     source_path: uploads
 
+
+
+
+
 # The size of the persistent disk of the application (in MB).
 disk: 2048
-
+dependencies:
+  python3:
+    pipeenv: "2022.5.2"
+    
 hooks:
     build: |
       pipenv install --system --deploy
