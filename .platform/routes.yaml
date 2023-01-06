@@ -1,5 +1,5 @@
 # Each route describes how an incoming URL is going to be processed by Platform.sh.
-"https://www.{default}/":
+"https://www.main-bvxea6i-ydaw6qnhwla6e.eu-5.platformsh.site/":
     type: upstream
     upstream: "app:http"
 
