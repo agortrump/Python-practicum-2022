@@ -8,7 +8,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
 import io
-
+import config
 
 app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
@@ -21,7 +21,7 @@ city_input = "Tallinn"
 
 
 # API data
-api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
+
 units = "metric"
 
 # Set time period
@@ -82,7 +82,7 @@ def get_weather(city=city_input):
         "https://api.openweathermap.org/data/2.5/weather?q="
         + city
         + "&appid="
-        + api_key
+        + config.api_key
         + "&units="
         + units
         + "&mode=json"
