@@ -8,7 +8,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
 import io
-
+import config
 
 app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
@@ -16,12 +16,12 @@ app = Flask(
 
 # Default city and coordinates
 city_input = "Tallinn"
-lat = 59.4372155
-lon = 24.7453688
+# lat = 59.4372155
+# lon = 24.7453688
 
 
 # API data
-api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
+
 units = "metric"
 
 # Set time period
@@ -39,8 +39,8 @@ def welcome():
 @app.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     global city_input
-    global lat
-    global lon
+    lat = get_coordinates(city_input)["lat"]
+    lon = get_coordinates(city_input)["lon"]
     # Get input from HTML form
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
@@ -49,8 +49,7 @@ def get_city(city="Tallinn"):
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
         city_input = city
-        # lat = get_coordinates(city_input)["lat"]
-        # lon = get_coordinates(city_input)["lon"]
+
     return (
         render_template(
             "weather.html",
@@ -83,7 +82,7 @@ def get_weather(city=city_input):
         "https://api.openweathermap.org/data/2.5/weather?q="
         + city
         + "&appid="
-        + api_key
+        + config.api_key
         + "&units="
         + units
         + "&mode=json"
@@ -107,6 +106,7 @@ def get_coordinates(city=city_input):
         + api_key)
     coordinate_data = requests.get(coordinates_url).json()
     return coordinate_data[0]
+
 
 #### ROUTING WEATHER HISTORY ####
 
@@ -178,6 +178,8 @@ def plot_png():
 # route for xlsx file
 @app.route("/history/history.xlsx", methods=["GET"])
 def weather_xlsx():
+    historical_data.to_excel('history/history.xlsx',
+                             sheet_name=city_input+'_history')
     return send_file(
         # File path for Linux/Mac
         "history/history.xlsx",
