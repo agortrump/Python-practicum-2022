@@ -64,7 +64,7 @@ def get_city(city="Tallinn"):
             lat_output=lat,
             lon_output=lon,
             map_src=('https://www.openstreetmap.org/export/embed.html?bbox=' + str(lon) +
-                     '%2C' + str(lat) + '%2C'+str(lon+0.2) + '%2C' + str(lat+0.0) + '&amplayer=mapnik'),
+                     '%2C' + str(lat) + '%2C' + '&amplayer=mapnik'),
             map_link=('https://www.openstreetmap.org/#map=10/' +
                       str(lat) + '/' + str(lon))
         ),
@@ -103,7 +103,7 @@ def get_coordinates(city=city_input):
         + ","
         + get_weather(city)["sys"]["country"]
         + "&limit=1&appid="
-        + api_key)
+        + config.api_key)
     coordinate_data = requests.get(coordinates_url).json()
     return coordinate_data[0]
 
