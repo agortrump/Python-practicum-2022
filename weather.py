@@ -24,12 +24,9 @@ city_input = "Tallinn"
 api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
 units = "metric"
 
-# Set time period
+# Set time period and get currend date and time
 end_date = datetime.today()
 start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
-
-# end_date = date.today()
-# start_date = date.today() - relativedelta(years=1)
 
 
 # WEATHER PAGE ROUTING
@@ -53,6 +50,8 @@ def get_city(city="Tallinn"):
             return render_template("weather.html", no_city="Could not find such city")
         # Create Point for City
         city_input = city
+    else:
+        return render_template("weather.html")
 
     return (
         render_template(
@@ -82,6 +81,7 @@ def get_city(city="Tallinn"):
             + str(lon),
             lat_output=lat,
             lon_output=lon,
+            last_five_cities=city_log(),
         ),
         city,
     )
@@ -128,6 +128,38 @@ def get_coordinates(city=city_input):
     coordinate_data = requests.get(coordinates_url).json()
 
     return coordinate_data[0]
+
+
+@app.route("/log", methods=["GET"])
+def city_log():
+    global last_five_cities
+    # Get city input log
+    city_input_log = pd.read_csv("logs/city_input_log.csv")
+    # Get current date and time
+    current_date = datetime.now().strftime("%-d.%m.%Y")
+    current_time = datetime.now().strftime("%H:%M:%S")
+
+    # Making new city row
+
+    new_row = pd.DataFrame(
+        {
+            "date": current_date,
+            "time": [current_time],
+            "city": city_input,
+            "temp": (get_weather(city_input)["main"]["temp"]),
+        },
+        index=[-1],
+    )
+    # adding row to dataframe and sorting by date and time
+    city_input_log = pd.concat([city_input_log, new_row])
+    city_input_log.sort_values(by=["time", "date"], ascending=False, inplace=True)
+    # Selecting last 5 inserted cities
+    last_five_cities = city_input_log.head(6)
+    last_five_cities = last_five_cities[1:6]
+    last_five_cities.style.set_table_styles()
+    # Saving new log file
+    city_input_log.to_csv("logs/city_input_log.csv", index=False)
+    return last_five_cities.to_html()
 
 
 @app.route("/weather_history", methods=["GET"])
