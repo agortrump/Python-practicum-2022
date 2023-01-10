@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, send_file, Blueprint
+from flask import Flask, render_template, request, Response, send_file
 import requests
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
@@ -7,13 +7,13 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
+import base64
 import io
+import numpy as np
+import pdfkit
 
-# from . import database
 
-weather = Blueprint("weather", __name__)
-
-app = Flask(
+weather = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
 )
 
@@ -33,17 +33,12 @@ start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
 # WEATHER PAGE ROUTING
 
 
-@app.route("/")
+@weather.route("/")
 def welcome():
     return render_template("index.html")
 
 
-@app.route("/profile")
-def profile():
-    return render_template("/profile.html")
-
-
-@app.route("/weather", methods=["POST", "GET"])
+@weather.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     lat = get_coordinates(city)["lat"]
     lon = get_coordinates(city)["lon"]
@@ -136,7 +131,7 @@ def get_coordinates(city=city_input):
     return coordinate_data[0]
 
 
-@app.route("/log", methods=["GET"])
+@weather.route("/log", methods=["GET"])
 def city_log():
     global last_five_cities
     # Get city input log
@@ -162,13 +157,14 @@ def city_log():
     # Selecting last 5 inserted cities
     last_five_cities = city_input_log.head(6)
     last_five_cities = last_five_cities[1:6]
-    last_five_cities.style.set_table_styles()
     # Saving new log file
     city_input_log.to_csv("logs/city_input_log.csv", index=False)
-    return last_five_cities.to_html()
+    return last_five_cities.to_html(
+        index=False, columns=("date", "time", "city", "temp")
+    )
 
 
-@app.route("/weather_history", methods=["GET"])
+@weather.route("/weather_history", methods=["GET"])
 def weather_history():
     global historical_data
     city_point = Point(
@@ -202,7 +198,7 @@ def weather_history():
     )
 
 
-@app.route("/plot")
+@weather.route("/plot")
 def plot_png():
 
     historical_data
@@ -229,7 +225,7 @@ def plot_png():
     return Response(output.getvalue(), mimetype="image/png")
 
 
-@app.route("/history/history.xlsx", methods=["GET"])
+@weather.route("/history/history.xlsx", methods=["GET"])
 def weather_xlsx():
     return send_file(
         # File path for Linux/Mac
@@ -241,7 +237,7 @@ def weather_xlsx():
     )
 
 
-@app.route("/history/graph.pdf", methods=["GET"])
+@weather.route("/history/graph.pdf", methods=["GET"])
 def weather_graph():
     return send_file(
         # File path for Linux/Mac
@@ -254,4 +250,4 @@ def weather_graph():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=80)
+    weather.run(debug=True, host="0.0.0.0", port=80)
