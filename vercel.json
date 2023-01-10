@@ -1,14 +1,14 @@
 {
     "builds": [
         {
-            "src": "weather.py",
+            "src": "main.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "weather.py"
+            "dest": "main.py"
         }
     ]
 }

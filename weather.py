@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, send_file
+from flask import Flask, render_template, request, Response, send_file, Blueprint
 import requests
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
@@ -7,10 +7,11 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
-import base64
 import io
-import numpy as np
-import pdfkit
+
+# from . import database
+
+weather = Blueprint("weather", __name__)
 
 app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
@@ -35,6 +36,11 @@ start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
 @app.route("/")
 def welcome():
     return render_template("index.html")
+
+
+@app.route("/profile")
+def profile():
+    return render_template("/profile.html")
 
 
 @app.route("/weather", methods=["POST", "GET"])
