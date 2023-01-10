@@ -18,10 +18,6 @@ app = Flask(
 city_input = "Tallinn"
 # lat = 59.4372155
 # lon = 24.7453688
-
-
-# API data
-
 units = "metric"
 
 # Set time period
