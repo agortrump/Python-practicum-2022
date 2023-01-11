@@ -8,6 +8,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
 import io
+import numpy as np
 
 # from constants import api_key
 
@@ -21,7 +22,6 @@ api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
 weather = Blueprint(
     "weather",
     __name__,
-    template_folder="Templates",
     static_url_path="",
     static_folder="static",
 )
@@ -42,7 +42,7 @@ start_date = pd.to_datetime(end_date) - pd.DateOffset(years=1)
 
 @weather.route("/")
 def welcome():
-    return render_template("base.html")
+    return render_template("index.html")
 
 
 @weather.route("/weather", methods=["POST", "GET"])
@@ -126,7 +126,7 @@ def get_coordinates(city=city_input):
     return coordinate_data[0]
 
 
-@weather.route("/log", methods=["GET"])
+@weather.route("/log")
 def city_log():
     global last_five_cities
     # Get city input log
@@ -258,5 +258,5 @@ def weather_graph():
 
 
 # if __name__ == "__main__":
-#     weather.run(debug=True, host="0.0.0.0", port=80)
+#    weather.run(debug=True, host="0.0.0.0", port=80)
 # app.run()

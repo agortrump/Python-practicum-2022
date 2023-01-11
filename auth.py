@@ -5,6 +5,7 @@ auth = Blueprint(
     "auth",
     __name__,
     template_folder="Templates",
+    static_url_path="",
     static_folder="static",
 )
 
