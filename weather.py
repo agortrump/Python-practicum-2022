@@ -83,6 +83,7 @@ def get_city(city="Tallinn"):
             map_link=(
                 "https://www.openstreetmap.org/#map=10/" + str(lat) + "/" + str(lon)
             ),
+            last_five_cities=city_log(),
         ),
         city,
     )
@@ -126,13 +127,13 @@ def get_coordinates(city=city_input):
     return coordinate_data[0]
 
 
-@weather.route("/log")
+@weather.route("/log", methods=["GET"])
 def city_log():
     global last_five_cities
     # Get city input log
     city_input_log = pd.read_csv("logs/city_input_log.csv")
     # Get current date and time
-    current_date = datetime.now().strftime("%-d.%m.%Y")
+    current_date = datetime.now().strftime("%D.%M.%Y")
     current_time = datetime.now().strftime("%H:%M:%S")
 
     # Making new city row
@@ -140,7 +141,7 @@ def city_log():
     new_row = pd.DataFrame(
         {
             "date": current_date,
-            "time": [current_time],
+            "time": current_time,
             "city": city_input,
             "temp": (get_weather(city_input)["main"]["temp"]),
         },
@@ -189,10 +190,10 @@ def weather_history():
         max_temp=historical_data["tmax"].max(),
         min_temp=historical_data["tmin"].min(),
         avg_temp=historical_data["tavg"].mean().round(decimals=2),
-        max_temp_date=max_temp_date.strftime("%-d.%m.%Y"),
-        min_temp_date=min_temp_date.strftime("%-d.%m.%Y"),
-        start_date=start_date.strftime("%-d.%m.%Y"),
-        end_date=end_date.strftime("%-d.%m.%Y"),
+        max_temp_date=max_temp_date.strftime("%D.%M.%Y"),
+        min_temp_date=min_temp_date.strftime("%D.%M.%Y"),
+        start_date=start_date.strftime("%D.%M.%Y"),
+        end_date=end_date.strftime("%D.%M.%Y"),
     )
 
 

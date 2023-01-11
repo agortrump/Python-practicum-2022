@@ -21,13 +21,12 @@
                         <button type="submit" class="btn btn-primary">Check weather</button>
                     </form>
                 </div>
+                <div id="cities_log" action='/log' method="GET">
+                    {{last_five_cities | safe}}
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="table" id="cities_log" action='/log' method="GET">
-                {{last_five_cities | safe}}
-            </div>
-        </div>
+
         <div class="col-md-4 gy-4" id="weather_output">
             {% if city %} <h3>Weather in {{city}}, {{country}}</h3> {% else %} <h3>Weather</h3> {% endif %}
             <p>Temperature: {{temp}} C<br>Feels like {{feels_like}} C<br>
