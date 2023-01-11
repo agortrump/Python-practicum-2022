@@ -6,13 +6,7 @@ database = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(
-        __name__,
-        __name__,
-        template_folder="Templates",
-        static_url_path="",
-        static_folder="static",
-    )
+    app = Flask(__name__, template_folder="Templates", static_folder="static")
 
     app.config["SECRET_KEY"] = "secret-key-goes-here"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.sqlite"
