@@ -3,6 +3,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 from meteostat import Point, Daily
+import numpy as np
 
 
 api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
@@ -77,16 +78,24 @@ historical_data = Daily(city_point, start, end)
 historical_data = historical_data.fetch()
 # Arranging hidtorical data to table and excel file
 historical_data = pd.DataFrame(historical_data).reset_index()
-# historical_data = pd.DataFrame(historical_data)
 
-max_temp_date = historical_data.loc[
-    historical_data.tmax == historical_data.tmax.max(), "time"
-].item()
-min_temp_date = historical_data.loc[
-    historical_data.tmin == historical_data.tmin.min(), "time"
-].item()
-max_temp = historical_data["tmax"].max()
-min_temp = historical_data["tmin"].min()
+max_temp_df = historical_data.iloc[historical_data.tmax.argmax()]
+min_temp_df = historical_data.iloc[historical_data.tmin.argmax()]
+
+max_temp = max_temp_df.tmax
+min_temp = min_temp_df.tmin
+max_temp_date = max_temp_df.time
+min_temp_date = min_temp_df.time
+
+
+# max_temp_date = historical_data.loc[
+#     historical_data.tmax == historical_data.tmax.max(), "time"
+# ]
+# min_temp_date = historical_data.loc[
+#     historical_data.tmin == historical_data.tmin.min(), "time"
+# ]
+# max_temp = historical_data["tmax"].max()
+# min_temp = historical_data["tmin"].min()
 
 
 # historical_data["time"] = historical_data["time"].dt.date
@@ -114,7 +123,7 @@ min_temp = historical_data["tmin"].min()
 # print(end_date)
 # print(start_date)
 
-# print(historical_data)
+print(historical_data)
 print(max_temp)
 print(min_temp)
 print(max_temp_date)

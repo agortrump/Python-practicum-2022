@@ -9,6 +9,7 @@ from meteostat import Point, Daily
 import pandas as pd
 import io
 import numpy as np
+from .config import api_key
 
 # from constants import api_key
 
@@ -50,13 +51,14 @@ def welcome():
 
 @weather.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
-    global city_input
     global get_weather
     global get_coordinates
+    global city_input
+
     # Get input from HTML form
 
     ## WEATHER API CALL ##
-    def get_weather(city=city_input):
+    def get_weather(city):
         global weather_data
         # MERGING WEATHER API URL
         weather_url = (
@@ -71,42 +73,47 @@ def get_city(city="Tallinn"):
         weather_data = requests.get(weather_url).json()
         return weather_data
 
+    def get_coordinates(city):
+        global coordinate_data
+        # MERGING Coordinates API URL
+        coordinates_url = (
+            "http://api.openweathermap.org/geo/1.0/direct?q="
+            + city
+            + ","
+            + get_weather(city)["sys"]["country"]
+            + "&limit=1&appid="
+            + api_key
+        )
+        coordinate_data = requests.get(coordinates_url).json()
+        return coordinate_data[0]
+
+    lat = get_coordinates(city)["lat"]
+    lon = get_coordinates(city)["lon"]
     # CITY COORDINATES FROM API
 
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
         # If city not in values, return could not find
         if city not in get_weather(city).values():
-            return render_template("weather.html", no_city="Could not find such city")
+            return render_template(
+                "weather.html",
+                no_city="Could not find such city",
+                last_five_cities=city_log(city_input),
+            )
         # Create Point for City
         city_input = city
-
-        def get_coordinates(city_input):
-            global coordinate_data
-            # MERGING Coordinates API URL
-            coordinates_url = (
-                "http://api.openweathermap.org/geo/1.0/direct?q="
-                + city_input
-                + ","
-                + get_weather(city_input)["sys"]["country"]
-                + "&limit=1&appid="
-                + api_key
-            )
-            coordinate_data = requests.get(coordinates_url).json()
-            return coordinate_data[0]
-
-    lat = get_coordinates(city_input)["lat"]
-    lon = get_coordinates(city_input)["lon"]
+        lat = get_coordinates(city_input)["lat"]
+        lon = get_coordinates(city_input)["lon"]
     return (
         render_template(
             "weather.html",
-            temp=get_weather(city)["main"]["temp"],
-            feels_like=get_weather(city)["main"]["feels_like"],
-            wind=get_weather(city)["wind"]["speed"],
+            temp=get_weather(city_input)["main"]["temp"],
+            feels_like=get_weather(city_input)["main"]["feels_like"],
+            wind=get_weather(city_input)["wind"]["speed"],
             city=city,
-            country=get_weather(city)["sys"]["country"],
+            country=get_weather(city_input)["sys"]["country"],
             icon="https://openweathermap.org/img/wn/"
-            + get_weather(city)["weather"][0]["icon"]
+            + get_weather(city_input)["weather"][0]["icon"]
             + "@2x.png",
             lat_output=lat,
             lon_output=lon,
@@ -121,19 +128,19 @@ def get_city(city="Tallinn"):
             map_link=(
                 "https://www.openstreetmap.org/#map=10/" + str(lat) + "/" + str(lon)
             ),
-            last_five_cities=city_log(),
+            last_five_cities=city_log(city_input),
         ),
         city,
     )
 
 
 @weather.route("/log", methods=["GET"])
-def city_log():
+def city_log(city_input):
     global last_five_cities
     # Get city input log
     city_input_log = pd.read_csv("logs/city_input_log.csv")
     # Get current date and time
-    current_date = datetime.now().strftime("%D.%M.%Y")
+    current_date = datetime.now().strftime("%d.%m.%Y")
     current_time = datetime.now().strftime("%H:%M:%S")
 
     # Making new city row
@@ -180,18 +187,17 @@ def weather_history():
     # set data type for time column to date
     historical_data["time"] = historical_data["time"].dt.date
     # Finding MAX and MIN temp values and dates
-    max_temp_date = historical_data.loc[
-        historical_data.tmax == historical_data.tmax.max(), "time"
-    ].item()
-    min_temp_date = historical_data.loc[
-        historical_data.tmin == historical_data.tmin.min(), "time"
-    ].item()
+    max_temp_df = historical_data.iloc[historical_data.tmax.argmax()]
+    min_temp_df = historical_data.iloc[historical_data.tmin.argmax()]
+
+    max_temp_date = max_temp_df.time
+    min_temp_date = min_temp_df.time
 
     return render_template(
         "weather_history.html",
         city=city_input,
-        max_temp=historical_data["tmax"].max(),
-        min_temp=historical_data["tmin"].min(),
+        max_temp=max_temp_df.tmax,
+        min_temp=min_temp_df.tmin,
         avg_temp=historical_data["tavg"].mean().round(decimals=2),
         max_temp_date=max_temp_date.strftime("%D.%M.%Y"),
         min_temp_date=min_temp_date.strftime("%D.%M.%Y"),
