@@ -27,7 +27,10 @@ weather = Blueprint(
 )
 
 # Default city and coordinates
-city_input = "Tallinn"
+try:
+    city_input
+except:
+    city_input = "Tallinn"
 # lat = 59.4372155
 # lon = 24.7453688
 units = "metric"
@@ -48,9 +51,28 @@ def welcome():
 @weather.route("/weather", methods=["POST", "GET"])
 def get_city(city="Tallinn"):
     global city_input
-    lat = get_coordinates(city_input)["lat"]
-    lon = get_coordinates(city_input)["lon"]
+    global get_weather
+    global get_coordinates
     # Get input from HTML form
+
+    ## WEATHER API CALL ##
+    def get_weather(city=city_input):
+        global weather_data
+        # MERGING WEATHER API URL
+        weather_url = (
+            "https://api.openweathermap.org/data/2.5/weather?q="
+            + city
+            + "&appid="
+            + api_key
+            + "&units="
+            + units
+            + "&mode=json"
+        )
+        weather_data = requests.get(weather_url).json()
+        return weather_data
+
+    # CITY COORDINATES FROM API
+
     if request.method == "POST":
         city = request.form.get("city_name").capitalize()
         # If city not in values, return could not find
@@ -59,6 +81,22 @@ def get_city(city="Tallinn"):
         # Create Point for City
         city_input = city
 
+        def get_coordinates(city_input):
+            global coordinate_data
+            # MERGING Coordinates API URL
+            coordinates_url = (
+                "http://api.openweathermap.org/geo/1.0/direct?q="
+                + city_input
+                + ","
+                + get_weather(city_input)["sys"]["country"]
+                + "&limit=1&appid="
+                + api_key
+            )
+            coordinate_data = requests.get(coordinates_url).json()
+            return coordinate_data[0]
+
+    lat = get_coordinates(city_input)["lat"]
+    lon = get_coordinates(city_input)["lon"]
     return (
         render_template(
             "weather.html",
@@ -87,44 +125,6 @@ def get_city(city="Tallinn"):
         ),
         city,
     )
-
-
-### WEATHER API CALL ##
-
-
-def get_weather(city=city_input):
-    global weather_data
-    # MERGING WEATHER API URL
-    weather_url = (
-        "https://api.openweathermap.org/data/2.5/weather?q="
-        + city
-        + "&appid="
-        + api_key
-        + "&units="
-        + units
-        + "&mode=json"
-    )
-    weather_data = requests.get(weather_url).json()
-
-    return weather_data
-
-
-# CITY COORDINATES FROM API
-
-
-def get_coordinates(city=city_input):
-    global coordinate_data
-    # MERGING Coordinates API URL
-    coordinates_url = (
-        "http://api.openweathermap.org/geo/1.0/direct?q="
-        + city
-        + ","
-        + get_weather(city)["sys"]["country"]
-        + "&limit=1&appid="
-        + api_key
-    )
-    coordinate_data = requests.get(coordinates_url).json()
-    return coordinate_data[0]
 
 
 @weather.route("/log", methods=["GET"])
@@ -156,7 +156,10 @@ def city_log():
     # Saving new log file
     city_input_log.to_csv("logs/city_input_log.csv", index=False)
     return last_five_cities.to_html(
-        index=False, columns=("date", "time", "city", "temp")
+        index=False,
+        columns=("date", "time", "city", "temp"),
+        justify="left",
+        border="border",
     )
 
 
