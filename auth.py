@@ -1,7 +1,12 @@
 from flask import Blueprint, render_template
 from . import database
 
-auth = Blueprint("auth", __name__)
+auth = Blueprint(
+    "auth",
+    __name__,
+    template_folder="Templates",
+    static_folder="static",
+)
 
 
 @auth.route("/login")
