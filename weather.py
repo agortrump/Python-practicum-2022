@@ -8,7 +8,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from meteostat import Point, Daily
 import pandas as pd
 import io
-import config
+from constants import api_key
 
 app = Flask(
     __name__, template_folder="Templates", static_url_path="", static_folder="static"
@@ -82,7 +82,7 @@ def get_weather(city=city_input):
         "https://api.openweathermap.org/data/2.5/weather?q="
         + city
         + "&appid="
-        + config.api_key
+        + api_key
         + "&units="
         + units
         + "&mode=json"
@@ -106,6 +106,39 @@ def get_coordinates(city=city_input):
         + api_key)
     coordinate_data = requests.get(coordinates_url).json()
     return coordinate_data[0]
+
+#### CITY INPUT LOG ####
+
+@app.route("/log", methods=["GET"])
+def city_log():
+    global last_five_cities
+    # Get city input log
+    city_input_log = pd.read_csv("logs/city_input_log.csv")
+    # Get current date and time
+    current_date = datetime.now().strftime("%-d.%m.%Y")
+    current_time = datetime.now().strftime("%H:%M:%S")
+
+    # Making new city row
+
+    new_row = pd.DataFrame(
+        {
+            "date": current_date,
+            "time": [current_time],
+            "city": city_input,
+            "temp": (get_weather(city_input)["main"]["temp"]),
+        },
+        index=[-1],
+    )
+    # adding row to dataframe and sorting by date and time
+    city_input_log = pd.concat([city_input_log, new_row])
+    city_input_log.sort_values(by=["time", "date"], ascending=False, inplace=True)
+    # Selecting last 5 inserted cities
+    last_five_cities = city_input_log.head(6)
+    last_five_cities = last_five_cities[1:6]
+    # Saving new log file
+    city_input_log.to_csv("logs/city_input_log.csv", index=False)
+    return last_five_cities.to_html(columns=("date", "time", "city", "temp")
+    )
 
 
 #### ROUTING WEATHER HISTORY ####
