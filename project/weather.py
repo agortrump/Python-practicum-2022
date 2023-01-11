@@ -1,4 +1,12 @@
-from flask import Flask, render_template, request, Response, send_file, Blueprint
+from flask import (
+    Flask,
+    render_template,
+    request,
+    Response,
+    send_file,
+    Blueprint,
+    redirect,
+)
 import requests
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
@@ -9,7 +17,10 @@ from meteostat import Point, Daily
 import pandas as pd
 import io
 import numpy as np
-from .config import api_key
+
+from project.package.config import api_key
+from . import db
+from .favorites import Favorite
 
 # from constants import api_key
 
@@ -18,11 +29,11 @@ from .config import api_key
 #     __name__, template_folder="Templates", static_url_path="", static_folder="static"
 # )
 
-api_key = "c89dc689f952d6b8abcbafe9569fbc8f"
 
 weather = Blueprint(
     "weather",
     __name__,
+    template_folder="project/Templates",
     static_url_path="",
     static_folder="static",
 )
@@ -89,6 +100,7 @@ def get_city(city="Tallinn"):
 
     lat = get_coordinates(city)["lat"]
     lon = get_coordinates(city)["lon"]
+    favorites = Favorite.query.all()
     # CITY COORDINATES FROM API
 
     if request.method == "POST":
@@ -104,6 +116,7 @@ def get_city(city="Tallinn"):
         city_input = city
         lat = get_coordinates(city_input)["lat"]
         lon = get_coordinates(city_input)["lon"]
+
     return (
         render_template(
             "weather.html",
@@ -129,6 +142,7 @@ def get_city(city="Tallinn"):
                 "https://www.openstreetmap.org/#map=10/" + str(lat) + "/" + str(lon)
             ),
             last_five_cities=city_log(city_input),
+            favorites=favorites,
         ),
         city,
     )
@@ -265,6 +279,22 @@ def weather_graph():
         download_name=city_input + " weather graph.pdf",
         as_attachment=True,
     )
+
+
+@weather.route("/cities", methods=["POST"])
+def favorite_input():
+
+    city_name = city_input
+    db_input = Favorite(city_name=city_name)
+    db.session.add(db_input)
+    db.session.commit()
+
+    return redirect("/weather")
+
+
+@weather.before_app_first_request
+def create_tables():
+    db.create_all()
 
 
 # if __name__ == "__main__":

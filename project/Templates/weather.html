@@ -21,6 +21,7 @@
                         <button type="submit" class="btn btn-primary">Check weather</button>
                     </form>
                 </div>
+                <h4>Cities looked before</h4>
                 <div id="cities_log" action='/log' method="GET">
                     {{last_five_cities | safe}}
                 </div>
@@ -35,6 +36,16 @@
             <div class="col" action="/weather_history" method="GET">
                 <a href='/weather_history'>Weather history for {{city}}</a>
             </div>
+            <form action="/cities" method="POST">
+                <button type="submit" class="btn btn-primary">Add to favorites</button>
+            </form>
+            {% for data in favorites %}
+            <tbody>
+                <td>{{data.city_name}}</td>
+                <td><a href="/delete/{{data.city_name}}" type="button">Delete</a></td>
+            </tbody>
+            {% endfor%}
+
         </div>
 
         <div class="col-md-4 gy-4" id="coordinates">
