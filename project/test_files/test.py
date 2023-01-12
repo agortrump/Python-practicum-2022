@@ -123,11 +123,11 @@ min_temp_date = min_temp_df.time
 # print(end_date)
 # print(start_date)
 
-print(historical_data)
-print(max_temp)
-print(min_temp)
-print(max_temp_date)
-print(min_temp_date)
+# print(historical_data)
+# print(max_temp)
+# print(min_temp)
+# print(max_temp_date)
+# print(min_temp_date)
 
 # print(weather_history(city="kuressaare"))
 
@@ -137,3 +137,24 @@ print(min_temp_date)
 # print(get_weather('tallinn'))
 
 # print(get_weather('tallinn')['main']['temp'])
+
+
+from .__init__ import db
+from favorites import Favorite
+from flask import (
+    Flask,
+    render_template,
+    request,
+    Response,
+    send_file,
+    Blueprint,
+    redirect,
+    session,
+)
+
+
+for item in Favorite:
+    item = Favorite.query.get("city_name")
+    item.temp_city = temp_city = get_weather(city_input=item)["main"]["temp"]
+    db.session.commit()
+    print(item)

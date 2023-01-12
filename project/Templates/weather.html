@@ -42,7 +42,8 @@
             {% for data in favorites %}
             <tbody>
                 <td>{{data.city_name}}</td>
-                <td><a href="/delete/{{data.city_name}}" type="button">Delete</a></td>
+                <td>{{data.temp_city}}</td>
+                <td><a href="/delete/{{data.city_name}}" type="button">Delete</a></td><br>
             </tbody>
             {% endfor%}
 

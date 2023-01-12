@@ -281,15 +281,16 @@ def weather_graph():
     )
 
 
-@weather.route("/cities", methods=["POST"])
+@weather.route("/cities", methods=["POST", "GET"])
 def favorite_input():
 
     city_name = city_input
     db_input = Favorite(city_name=city_name)
     db.session.add(db_input)
     db.session.commit()
+    temp_city = get_weather(city_input)["main"]["temp"]
 
-    return redirect("/weather")
+    return redirect("/weather", temp_city=temp_city)
 
 
 @weather.before_app_first_request
